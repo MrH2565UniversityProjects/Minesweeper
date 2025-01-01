@@ -17,9 +17,9 @@ void Run();
 bool HandleAction(int button);
 int main()
 {
-    system("cls");
+    ClearScreen();
     HideCursor();
-    LoadingScene();
+    //LoadingScene();
     MainMenu();
     return 0;
 }

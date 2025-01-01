@@ -9,6 +9,7 @@
 #include "game.h"
 #include "colors.h"
 #include "menu.h"
+#include "utilities.h"
 using namespace std;
 struct Cell
 {
@@ -17,7 +18,8 @@ struct Cell
     bool isFlagged;
     int adjacentMines;
 };
-struct GameProperties{
+struct GameProperties
+{
     int rows;
     int cols;
     int TotalMineCount;
@@ -84,8 +86,7 @@ int userRow = 0;
 int userCol = 0;
 void DisplayGrid()
 {
-    system("cls");
-
+    MoveCursorToTopLeft();
     for (int r = 0; r < properties.rows; r++)
     {
         for (int c = 0; c < properties.cols; c++)
@@ -165,27 +166,28 @@ void InitializeGird()
 }
 void InitializeGame(GameOptions options)
 {
+    ClearScreen();
     switch (options.difficulty)
     {
     case 0:
-    properties.cols = 8;
-    properties.rows = 5;
-    properties.TotalMineCount = 5;
+        properties.cols = 8;
+        properties.rows = 5;
+        properties.TotalMineCount = 5;
         break;
     case 1:
-    properties.cols = 8;
-    properties.rows = 10;
-    properties.TotalMineCount = 40;
+        properties.cols = 8;
+        properties.rows = 10;
+        properties.TotalMineCount = 40;
         break;
     case 2:
-    properties.cols = 12;
-    properties.rows = 12;
-    properties.TotalMineCount = 60;
+        properties.cols = 12;
+        properties.rows = 12;
+        properties.TotalMineCount = 60;
         break;
-    case 3:    
-    properties.cols = 18;
-    properties.rows = 18;
-    properties.TotalMineCount = 100;
+    case 3:
+        properties.cols = 18;
+        properties.rows = 18;
+        properties.TotalMineCount = 100;
         break;
     }
     InitializeGird();
@@ -194,21 +196,37 @@ void StartGame()
 {
     options = GameOptionsMenu();
     InitializeGame(options);
-    
+
     bool IsGridGenerate = false;
     while (true)
     {
         DisplayGrid();
         cout << "Use WASD to move, F to flag, and R to reveal." << endl;
         char action = getch();
-        if (action == 'w' && userRow > 0)
+        if (action == 'w')
+        {
             userRow--;
-        if (action == 's' && userRow < properties.rows - 1)
+            if (userRow < 0)
+                userRow = properties.rows - 1;
+        }
+        if (action == 's')
+        {
             userRow++;
-        if (action == 'a' && userCol > 0)
-            userCol--; //
-        if (action == 'd' && userCol < properties.cols - 1)
+            if (userRow > properties.rows - 1)
+                userRow = 0;
+        }
+        if (action == 'a')
+        {
+            userCol--;
+            if (userCol < 0)
+                userCol = properties.cols - 1;
+        }
+        if (action == 'd')
+        {
             userCol++;
+            if (userCol > properties.cols - 1)
+                userCol = 0;
+        }
         if (action == 'r')
         {
             if (!IsGridGenerate)
@@ -248,4 +266,5 @@ void StartGame()
         }
     }
     char c = getch();
+    ClearScreen();
 };

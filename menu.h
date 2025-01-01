@@ -1,5 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 #include <string>
 using namespace std;
 struct GameOptions
@@ -10,5 +9,3 @@ struct GameOptions
 
 void MainMenu();
 GameOptions GameOptionsMenu();
-
-#endif

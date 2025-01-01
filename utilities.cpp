@@ -1,11 +1,18 @@
 #include <iostream>
+#include <windows.h>
+#include "utilities.h"
 using namespace std;
 void HideCursor()
 {
     cout << "\033[?25l";
     cout.flush();
 }
-
+void MoveCursorToTopLeft()
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD coord = {0, 0};
+    SetConsoleCursorPosition(hConsole, coord);
+}
 void ShowCursor()
 {
     cout << "\033[?25h";
@@ -13,11 +20,18 @@ void ShowCursor()
 }
 void ClearScreen()
 {
-    cout << "\033[2J\033[H";
+    system("cls");
 }
 
+void gotoxy(int x, int y) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
+    COORD pos;             
+    pos.X = x;  
+    pos.Y = y;                                 
+    SetConsoleCursorPosition(hConsole, pos);    
+}
 int GetMaxLineLength(string multilineString) {
-    stringstream ss(multilineString);
+/*     stringstream ss(multilineString);
     string line;
     int maxLength = 0;
 
@@ -26,6 +40,7 @@ int GetMaxLineLength(string multilineString) {
         if (lineLength > maxLength) {
             maxLength = lineLength; 
         }
-    }
-    return maxLength;
+    } 
+    return maxLength;*/
+    return 50;  
 }

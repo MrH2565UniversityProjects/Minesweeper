@@ -1,5 +1,6 @@
 #include <iostream>
 #include "menu.h"
+#include "utilities.h"
 using namespace std;
 
 struct Button
@@ -24,7 +25,7 @@ void DisplayButton(string label, bool isSelected, int whitespaceCount, string co
     else
     {
         cout << color << whitespace << "╒════════════════════╕" << RESET << endl;
-        cout << color << whitespace << "│   " << setw(17) << left << label << "│" << RESET << endl;
+        cout << color << whitespace << "│   " << setw(17) << left << label << "│   " << RESET << endl;
         cout << color << whitespace << "╘════════════════════╛" << RESET << endl;
     }
 }
@@ -80,12 +81,11 @@ void MainMenu()
     int selectedButton = 0;
     int buttonsCount = sizeof(Buttons) / sizeof(Buttons[0]);
     bool isRunning = true;
-
+    ClearScreen();
     while (isRunning)
     {
-        ClearScreen();
+        MoveCursorToTopLeft();
         DisplayMenu(header, Buttons, buttonsCount, selectedButton, true, YELLOW);
-
         char input = getch();
         if (input == '\r')
         {
@@ -137,9 +137,10 @@ GameOptions GameOptionsMenu()
     cout << CYAN << "    ■   " << RESET << "Enter Your name (whitespace is not allowed): " << YELLOW;
     cin >> gameOptions.playerName;
     cout << RESET;
+    ClearScreen();
     while (isRunning)
     {
-        ClearScreen();
+       MoveCursorToTopLeft();;
         DisplayMenu(header, Buttons, buttonsCount, selectedButton, false);
 
         char input = getch();

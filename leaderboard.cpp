@@ -51,4 +51,5 @@ void Leaderboard(string LeaderboardFileName)
     cout << CYAN << whitespace << "╘══════╧════════════════════════════════════════════════════╧═══════╛" << RESET << endl << endl;
     cout << YELLOW << whitespace << "             Press any key to back to main menu..." << RESET << endl;
     char choice = getch();
+    ClearScreen();
 };
