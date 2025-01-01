@@ -17,6 +17,7 @@ void Run();
 bool HandleAction(int button);
 int main()
 {
+    SendMessage(GetConsoleWindow(), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     ClearScreen();
     HideCursor();
     //LoadingScene();

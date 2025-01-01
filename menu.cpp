@@ -1,158 +1,131 @@
 #include <iostream>
 #include "menu.h"
 #include "utilities.h"
+#include "colors.h"
+#include "game.h"
+#include "leaderboard.h"
+#include "form.h"
+#include "form.cpp"
+#include <iomanip>
+#include <conio.h>
 using namespace std;
 
-struct Button
-{
-    string label;
-    int id;
-    string color = RESET;
-};
-void DisplayButton(string label, bool isSelected, int whitespaceCount, string color = RESET, string selected_color = YELLOW)
-{
-    string whitespace = "";
-    for (int i = 0; i < whitespaceCount; i++)
-    {
-        whitespace += " ";
-    }
-    if (isSelected)
-    {
-        cout << selected_color << whitespace << "╒════════════════════╕" << RESET << endl;
-        cout << selected_color << whitespace << "│   " << setw(17) << left << label << "│  ■" << RESET << endl;
-        cout << selected_color << whitespace << "╘════════════════════╛" << RESET << endl;
-    }
-    else
-    {
-        cout << color << whitespace << "╒════════════════════╕" << RESET << endl;
-        cout << color << whitespace << "│   " << setw(17) << left << label << "│   " << RESET << endl;
-        cout << color << whitespace << "╘════════════════════╛" << RESET << endl;
-    }
-}
-void DisplayHeader(string &header)
-{
-    cout << CYAN << header << RESET << endl
-         << endl;
-}
-void DisplayMenu(string& header, Button* buttons, int buttonsCount, int selectedButton, bool useSelectedButtonColor = true, string SelectedButtonColor = YELLOW)
-{
-    DisplayHeader(header);
-    for (int i = 0; i < buttonsCount; ++i)
-    {
-        string selectedButtonColor;
-        if (useSelectedButtonColor)
-        {
-            selectedButtonColor = SelectedButtonColor;
-        }
-        else
-        {
-            selectedButtonColor = buttons[i].color;
-        }
-        int whitespace = GetMaxLineLength(header)/2-11;
-        DisplayButton(buttons[i].label, buttons[i].id == selectedButton,whitespace, buttons[i].color, selectedButtonColor);
-    }
-}
-int NavigateMenu(int currentSelection, int buttonsCount, char input)
-{
-    switch (input)
-    {
-    case 'w':
-        return (currentSelection - 1 + buttonsCount) % buttonsCount;
-    case 's':
-        return (currentSelection + 1) % buttonsCount;
-    default:
-        return currentSelection;
-    }
-}
 void MainMenu()
 {
-    string header = R"(
-    __  __ _____ _   _ ______  _______          ________ ______ _____  ______ _____    _ 
-   |  \/  |_   _| \ | |  ____|/ ____\ \        / /  ____|  ____|  __ \|  ____|  __ \  | |
-   | \  / | | | |  \| | |__  | (___  \ \  /\  / /| |__  | |__  | |__) | |__  | |__) | | |
-   | |\/| | | | | . ` |  __|  \___ \  \ \/  \/ / |  __| |  __| |  ___/|  __| |  _  /  | |
-   | |  | |_| |_| |\  | |____ ____) |  \  /\  /  | |____| |____| |    | |____| | \ \  |_|
-   |_|  |_|_____|_| \_|______|_____/    \/  \/   |______|______|_|    |______|_|  \_\ (_))";
-
-    Button Buttons[3] = {
+    Display display = {1, 1, 3, 1};
+    const int bottonsCount = 3;
+    Button buttons[bottonsCount] = {
         {"New Game", 0},
         {"Leaderboard", 1},
         {"Exit", 2}};
-    int selectedButton = 0;
-    int buttonsCount = sizeof(Buttons) / sizeof(Buttons[0]);
-    bool isRunning = true;
+    string footer_label = "Main Menu";
     ClearScreen();
-    while (isRunning)
+    while (display.isRunning)
     {
         MoveCursorToTopLeft();
-        DisplayMenu(header, Buttons, buttonsCount, selectedButton, true, YELLOW);
+        ShowForm();
+        ShowButtons(buttons, display);
+        SetFooter(footer_label);
+        display.row = display.start_row;
+
         char input = getch();
-        if (input == '\r')
+        if (input != '\r')
         {
-            switch (selectedButton)
+            NavigateForm(display, input);
+        }
+        else
+        {
+            switch (display.user_row_position)
             {
-            case 0:
+            case 1:
                 StartGame();
                 break;
-            case 1:
+            case 2:
                 Leaderboard();
                 break;
-            case 2:
-                isRunning = false;
+            case 3:
+                display.isRunning = false;
                 break;
             default:
                 break;
             }
         }
-        else
-        {
-            selectedButton = NavigateMenu(selectedButton, buttonsCount, input);
-        }
     }
 }
 GameOptions GameOptionsMenu()
 {
-    string header = R"(
-      _____                         ____        _   _                 
-     / ____|                       / __ \      | | (_)                
-    | |  __  __ _ _ __ ___   ___  | |  | |_ __ | |_ _  ___  _ __  ___ 
-    | | |_ |/ _` | '_ ` _ \ / _ \ | |  | | '_ \| __| |/ _ \| '_ \/ __|
-    | |__| | (_| | | | | | |  __/ | |__| | |_) | |_| | (_) | | | \__ \
-     \_____|\__,_|_| |_| |_|\___|  \____/| .__/ \__|_|\___/|_| |_|___/
-                                         | |                          
-                                         |_|                          
-)";
     GameOptions gameOptions;
-    Button Buttons[4] = {
-        {"Easy", 0, GREEN},
-        {"Medium", 1, YELLOW},
-        {"Hard", 2, RED},
-        {"Legendary", 3, MAGENTA}};
-    int selectedButton = 0;
-    int buttonsCount = sizeof(Buttons) / sizeof(Buttons[0]);
-    bool isRunning = true;
-    ClearScreen();
-    cout << endl;
-    cout << CYAN << "======================================================================" << endl;
-    cout << CYAN << "    ■   " << RESET << "Enter Your name (whitespace is not allowed): " << YELLOW;
-    cin >> gameOptions.playerName;
-    cout << RESET;
-    ClearScreen();
-    while (isRunning)
-    {
-       MoveCursorToTopLeft();;
-        DisplayMenu(header, Buttons, buttonsCount, selectedButton, false);
 
+    Display display = {0, 0, 4, 0, true};
+    const int bottonsCount = 4;
+    Button buttons[4] = {
+        {"Easy", 0, GREEN, GREEN},
+        {"Medium", 1, YELLOW, YELLOW},
+        {"Hard", 2, RED, RED},
+        {"Custom", 3, RESET, RESET}};
+    string footer_label = "Game Options";
+    ClearScreen();
+    while (display.isRunning)
+    {
+        MoveCursorToTopLeft();
+        ShowForm();
+        ShowButtons(buttons, display);
+        SetFooter(footer_label);
+        ResetDisplay(display);
         char input = getch();
-        if (input == '\r')
+        if (input != '\r')
         {
-            gameOptions.difficulty = selectedButton;
-            return gameOptions;
+            NavigateForm(display, input);
         }
         else
         {
-            selectedButton = NavigateMenu(selectedButton, buttonsCount, input);
+            gameOptions.difficulty = display.user_row_position;
+            if (display.user_row_position == 3)
+                return CustomGameOptionsMenu(gameOptions);
+            return gameOptions;
         }
     }
-    return gameOptions;
+}
+GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
+{
+    Display display = {1, 1, 3, 1, true};
+    const int textboxsCount = 3;
+    Textbox textbox[textboxsCount] = {
+        {"Rows count", 0, RESET},
+        {"Columns count", 1, RESET},
+        {"Mines Cont", 2, RESET}};
+    string footer_label = "Press Any Key To Start Game!";
+    ClearScreen();
+    while (display.isRunning)
+    {
+        MoveCursorToTopLeft();
+        ShowForm();
+        ShowTextboxs(textbox, display);
+        ResetDisplay(display);
+        ShowCursor();
+        for (int i = 0; i < textboxsCount; i++)
+        {
+            int x = 30;
+            int y = 15 + (display.row + i) * 4;
+            Gotoxy(x, y);
+            textbox[i].value = GetInput(51, x, y);
+        }
+        HideCursor();
+        gameOptions.customRows = stoi(textbox[0].value);
+        gameOptions.customCols = stoi(textbox[1].value);
+        gameOptions.customMinesCount = stoi(textbox[2].value);
+        if (gameOptions.customRows > 20 ||
+            gameOptions.customCols >> 20 ||
+            (gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 9) ||
+            gameOptions.customMinesCount < 1)
+        {
+            SetFooter("Please enter logical information!");
+            char input = getch();
+        }
+        else
+        {
+            SetFooter(footer_label);
+            return gameOptions;
+        }
+    }
 }

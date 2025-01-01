@@ -23,7 +23,7 @@ void ClearScreen()
     system("cls");
 }
 
-void gotoxy(int x, int y) {
+void Gotoxy(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
     COORD pos;             
     pos.X = x;  
@@ -31,7 +31,7 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(hConsole, pos);    
 }
 int GetMaxLineLength(string multilineString) {
-/*     stringstream ss(multilineString);
+/*  stringstream ss(multilineString);
     string line;
     int maxLength = 0;
 
@@ -41,6 +41,37 @@ int GetMaxLineLength(string multilineString) {
             maxLength = lineLength; 
         }
     } 
-    return maxLength;*/
-    return 50;  
+    return maxLength; */
+    return 50;
+}
+string GetInput(int maxLength, int cursorX, int cursorY)
+{
+    string input;
+    char ch;
+
+    while (true)
+    {
+        ch = _getch();
+
+        if (ch == '\r')
+        {
+            break; 
+        }
+        else if (ch == '\b') 
+        {
+            if (!input.empty())
+            {
+                input.pop_back();
+                Gotoxy(cursorX + input.length(), cursorY); 
+                cout << " \b";
+            }
+        }
+        else if (input.length() < maxLength)
+        {
+            input.push_back(ch);
+            cout << ch; 
+        }
+    }
+
+    return input; 
 }

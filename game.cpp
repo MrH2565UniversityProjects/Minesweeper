@@ -91,6 +91,7 @@ void DisplayGrid()
     {
         for (int c = 0; c < properties.cols; c++)
         {
+            cout << "│ ";
             if (r == userRow && c == userCol)
             {
                 cout << BG_GRAY;
@@ -121,7 +122,7 @@ void DisplayGrid()
             {
                 cout << RESET << "?";
             }
-            cout << BG_RESET << RESET << " ";
+            cout << BG_RESET << RESET << " │";
         }
         cout << endl;
     }
@@ -185,10 +186,9 @@ void InitializeGame(GameOptions options)
         properties.TotalMineCount = 60;
         break;
     case 3:
-        properties.cols = 18;
-        properties.rows = 18;
-        properties.TotalMineCount = 100;
-        break;
+        properties.cols = options.customCols;
+        properties.rows = options.customRows;
+        properties.TotalMineCount = options.customMinesCount;
     }
     InitializeGird();
 }
