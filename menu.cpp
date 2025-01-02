@@ -109,14 +109,15 @@ GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
             int y = 15 + (display.row + i) * 4;
             Gotoxy(x, y);
             textbox[i].value = GetInput(51, x, y);
+            
         }
         HideCursor();
         gameOptions.customRows = stoi(textbox[0].value);
         gameOptions.customCols = stoi(textbox[1].value);
         gameOptions.customMinesCount = stoi(textbox[2].value);
-        if (gameOptions.customRows > 20 ||
-            gameOptions.customCols >> 20 ||
-            (gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 9) ||
+        if (gameOptions.customRows > 19 ||
+            gameOptions.customCols > 37 ||
+            (gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 18) ||
             gameOptions.customMinesCount < 1)
         {
             SetFooter("Please enter logical information!");

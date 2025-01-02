@@ -10,6 +10,7 @@
 #include "colors.h"
 #include "menu.h"
 #include "utilities.h"
+#include "form.h"
 using namespace std;
 struct Cell
 {
@@ -18,12 +19,14 @@ struct Cell
     bool isFlagged;
     int adjacentMines;
 };
+int start_x = 10;
+int start_y = 16;
 struct GameProperties
 {
     int rows;
     int cols;
     int TotalMineCount;
-    Cell grid[20][20];
+    Cell grid[20][38];
 };
 GameProperties properties;
 GameOptions options;
@@ -84,14 +87,33 @@ void CalculateAdjacentMines()
 }
 int userRow = 0;
 int userCol = 0;
+void DisplayGround()
+{
+    int x = 9;
+    int y = 14;
+    int rows = 19;
+    int cols = 39;
+    Gotoxy(x, y);
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            cout << BG_RESET << DARK_BLUE << "# ";
+        }
+        y++;
+        Gotoxy(x, y);
+    }
+    cout << RESET;
+}
 void DisplayGrid()
 {
-    MoveCursorToTopLeft();
+    int x = start_x;
+    int y = start_y;
+    Gotoxy(x, y);
     for (int r = 0; r < properties.rows; r++)
     {
         for (int c = 0; c < properties.cols; c++)
         {
-            cout << "│ ";
             if (r == userRow && c == userCol)
             {
                 cout << BG_GRAY;
@@ -122,9 +144,12 @@ void DisplayGrid()
             {
                 cout << RESET << "?";
             }
-            cout << BG_RESET << RESET << " │";
+            cout << BG_RESET << RESET;
+            if (c != properties.cols - 1)
+                cout << " ";
         }
-        cout << endl;
+        y++;
+        Gotoxy(x, y);
     }
 }
 void RevealCell(int row, int col)
@@ -171,18 +196,18 @@ void InitializeGame(GameOptions options)
     switch (options.difficulty)
     {
     case 0:
-        properties.cols = 8;
+        properties.cols = 11;
         properties.rows = 5;
         properties.TotalMineCount = 5;
         break;
     case 1:
-        properties.cols = 8;
-        properties.rows = 10;
+        properties.cols = 24;
+        properties.rows = 11;
         properties.TotalMineCount = 40;
         break;
     case 2:
-        properties.cols = 12;
-        properties.rows = 12;
+        properties.cols = 37;
+        properties.rows = 17;
         properties.TotalMineCount = 60;
         break;
     case 3:
@@ -190,10 +215,42 @@ void InitializeGame(GameOptions options)
         properties.rows = options.customRows;
         properties.TotalMineCount = options.customMinesCount;
     }
+    start_x = (87 - (properties.cols * 2 - 1)) / 2 + 3;
+    start_y = 14 + (19 - properties.rows) / 2;
+    if (start_x % 2 == 0)
+        start_x++;
     InitializeGird();
+    ShowForm();
+    DisplayGround();
+}
+void ShowGameOver(string fg_color, string bg_color)
+{
+    int x = 18;
+    int y = 20;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << "   _____                         ____                 _ ";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"(  / ____|                       / __ \               | |)";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << " | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __| |";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__| |)";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( | |__| | (_| | | | | | |  __/ | |__| |\ V /  __/ |  |_|)";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"(  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|  (_))";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"(                                                        )";
 }
 void StartGame()
 {
+
     options = GameOptionsMenu();
     InitializeGame(options);
 
@@ -201,7 +258,7 @@ void StartGame()
     while (true)
     {
         DisplayGrid();
-        cout << "Use WASD to move, F to flag, and R to reveal." << endl;
+        SetFooter("Use WASD to move, F to flag, and R to reveal.");
         char action = getch();
         if (action == 'w')
         {
@@ -239,7 +296,15 @@ void StartGame()
             }
             if (properties.grid[userRow][userCol].isMine)
             {
-                cout << "You hit a mine! Game Over!" << endl;
+                for (int i = 0; i < 12; i++)
+                {
+
+                    ShowGameOver(BG_RED, RESET);
+                    Sleep(150);
+                    ShowGameOver(BG_RESET, RED);
+                    Sleep(150);
+                }
+                Sleep(1500);
                 break;
             }
             RevealCell(userRow, userCol);
