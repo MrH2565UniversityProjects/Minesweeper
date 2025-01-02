@@ -25,10 +25,8 @@ void ShowButton(Button &_button, Display &_display)
 }
 void SetFooter(string label)
 {
-    int y = 35;
-    int x = (87 - label.length()) / 2 + 3;
-    Gotoxy(x, y);
-    cout << label;
+    Label _label = {label,RESET};
+    ShowLabel(_label,35);
 };
 void NavigateForm(Display &display, char input)
 {
@@ -74,9 +72,14 @@ void ShowTextboxs(Textbox _textboxs[], Display &_display)
     }
 }
 void ShowForm(){
-    cout << blank_form;
+    cout << RESET << blank_form;
 }
 
 void ResetDisplay(Display &display){
      display.row = display.start_row;
+}
+void ShowLabel(Label &_label,int y){
+    int x = (87 - _label.text.length()) / 2 + 3;
+    Gotoxy(x, y);
+    cout << _label.color << _label.text << RESET;
 }

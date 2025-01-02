@@ -58,6 +58,10 @@ struct Textbox{
     string color = RESET;
     string value;
 };
+struct Label{
+    string text;
+    string color = RESET;   
+};
 void NavigateForm(Display &display , char input);
 void SetFooter(string label);
 void ShowButton(Button &_button,Display& _display);
@@ -65,4 +69,5 @@ void ShowTextbox(Textbox &_textbox,Display& _display);
 void ShowButtons(Button _buttons[],Display& _display);
 void ShowTextboxs(Textbox _textboxs[], Display &_display);
 void ResetDisplay(Display &display);
+void ShowLabel(Label &_label,int y);
 void ShowForm();
