@@ -1,6 +1,8 @@
 #include <iostream>
 #include <windows.h>
+#include <conio.h>
 #include "utilities.h"
+
 using namespace std;
 void HideCursor()
 {
@@ -51,7 +53,7 @@ string GetInput(int maxLength, int cursorX, int cursorY)
 
     while (true)
     {
-        ch = _getch();
+        ch = getch();
 
         if (ch == '\r')
         {

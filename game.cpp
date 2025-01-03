@@ -29,7 +29,7 @@ struct GameProperties
     int rows;
     int cols;
     int TotalMineCount;
-    Cell grid[20][38];
+    Cell** grid;
 };
 GameProperties properties;
 GameOptions options;
@@ -201,22 +201,26 @@ void InitializeGame(GameOptions options)
     case 0:
         properties.cols = 11;
         properties.rows = 5;
-        properties.TotalMineCount = 5;
+        properties.TotalMineCount = properties.cols * properties.rows * 0.1;
         break;
     case 1:
         properties.cols = 24;
         properties.rows = 11;
-        properties.TotalMineCount = 40;
+        properties.TotalMineCount = properties.cols * properties.rows * 0.2;
         break;
     case 2:
         properties.cols = 37;
         properties.rows = 17;
-        properties.TotalMineCount = 60;
+        properties.TotalMineCount = properties.cols * properties.rows * 0.5;
         break;
     case 3:
         properties.cols = options.customCols;
         properties.rows = options.customRows;
         properties.TotalMineCount = options.customMinesCount;
+    }
+    properties.grid = new Cell*[properties.rows];
+    for (int i = 0; i < properties.rows; i++) {
+        properties.grid[i] = new Cell[properties.cols];
     }
     start_x = (87 - (properties.cols * 2 - 1)) / 2 + 3;
     start_y = 14 + (19 - properties.rows) / 2;
@@ -225,6 +229,13 @@ void InitializeGame(GameOptions options)
     InitializeGird();
     ShowForm();
     DisplayGround();
+}
+void FreeGameGrid()
+{
+    for (int i = 0; i < properties.rows; i++) {
+        delete[] properties.grid[i];
+    }
+    delete[] properties.grid;
 }
 void ShowGameOver(string fg_color, string bg_color)
 {
@@ -283,7 +294,7 @@ void ShowCongratulations(string fg_color, string bg_color)
     Gotoxy(x, y);
     cout << fg_color << bg_color << R"( ╚═══════════════════════════════════════════════╝ )";
 }
-void StartGame()
+void StartGame(Player player)
 {
 
     options = GameOptionsMenu();
@@ -292,7 +303,7 @@ void StartGame()
     time_t startTime, endTime;
     startTime = time(NULL);  
     bool IsGridGenerate = false;
-    bool won = true;
+    bool isWin = true;
     while (true)
     {
         DisplayGrid();
@@ -354,21 +365,21 @@ void StartGame()
         {
             ToggleFlag(userRow, userCol);
         }
-        won = true;
+        isWin = true;
         for (int r = 0; r < properties.rows; r++)
         {
             for (int c = 0; c < properties.cols; c++)
             {
                 if (!properties.grid[r][c].isMine && !properties.grid[r][c].isRevealed)
                 {
-                    won = false;
+                    isWin = false;
                 }
             }
         }
         if (action == 'v'){
-            won = true;
+            isWin = true;
         }
-        if (won)
+        if (isWin)
         {
             for (int i = 0; i < 12; i++)
             {
@@ -382,11 +393,12 @@ void StartGame()
             break;
         }
     }
+    FreeGameGrid();
     endTime = time(NULL);
     double duration = difftime(endTime, startTime);
-    int score = CalculateScore(duration,revalvedCellsCount,won);
-    string name = "player10";
-    Player player = {name,score,won};
+    int score = CalculateScore(duration,revalvedCellsCount,isWin);
+    player.score = score;
+    player.isWin = isWin;
     UpdateLeaderboard(player);
     char c = getch();
     ClearScreen();

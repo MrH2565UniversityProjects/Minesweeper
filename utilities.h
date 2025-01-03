@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+
+using namespace std;
 void HideCursor();
 void ShowCursor();
 void ClearScreen();

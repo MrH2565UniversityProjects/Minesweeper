@@ -10,6 +10,6 @@ struct GameOptions
     int customMinesCount = 0;
 };
 
-void MainMenu();
 GameOptions GameOptionsMenu();
 GameOptions CustomGameOptionsMenu(GameOptions gameOptions);
+void MainMenu(Player player);

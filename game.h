@@ -7,5 +7,6 @@ void RevealCell(int row, int col);
 void ToggleFlag(int row, int col);
 void InitializeGird();
 void InitializeGame();
-void StartGame();
+void StartGame(Player player);
 int CalculateScore(double duration,int revalvedCellsCount,bool isWin);
+void FreeGameGrid();

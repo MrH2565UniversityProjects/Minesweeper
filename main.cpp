@@ -10,7 +10,6 @@
 #include "leaderboard.cpp"
 #include "game.cpp"
 #include "menu.cpp"
-#include "scenes.cpp"
 using namespace std;
 bool isRunning = true;
 void Run();
@@ -20,8 +19,8 @@ int main()
     SendMessage(GetConsoleWindow(), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     ClearScreen();
     HideCursor();
-    //LoadingScene();
-    MainMenu();
+    Player player = SignInMenu();
+    MainMenu(player);
     return 0;
 }
 

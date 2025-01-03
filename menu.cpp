@@ -8,9 +8,11 @@
 #include "form.cpp"
 #include <iomanip>
 #include <conio.h>
+#include <string>
+#include <algorithm>
 using namespace std;
 
-void MainMenu()
+void MainMenu(Player player)
 {
     Display display = {1, 1, 3, 1};
     const int bottonsCount = 3;
@@ -24,6 +26,8 @@ void MainMenu()
     {
         MoveCursorToTopLeft();
         ShowForm();
+        Label WelcomeMessage = { "Welcome " + player.name,YELLOW};
+        ShowLabel(WelcomeMessage,15);
         ShowButtons(buttons, display);
         SetFooter(footer_label);
         display.row = display.start_row;
@@ -38,7 +42,7 @@ void MainMenu()
             switch (display.user_row_position)
             {
             case 1:
-                StartGame();
+                StartGame(player);
                 break;
             case 2:
                 Leaderboard();
@@ -52,6 +56,35 @@ void MainMenu()
         }
     }
 }
+Player SignInMenu()
+{
+    Player player = {"",0,false};
+    Display display = {2, 2, 1, 2, true};
+    const int textboxsCount = 3;
+    Textbox textbox = {"Enter your name", 0, YELLOW};
+    string footer_label = "Press Any Key To Start Game!";
+    ClearScreen();
+    while (display.isRunning)
+    {
+        MoveCursorToTopLeft();
+        ShowForm();
+
+        ShowTextbox(textbox, display);
+        ResetDisplay(display);
+        ShowCursor();
+            int x = 30;
+            int y = 15 + (display.row) * 4;
+            Gotoxy(x, y);
+            textbox.value = GetInput(51, x, y);
+        
+        HideCursor();
+        string name = textbox.value;
+        replace(name.begin(), name.end(), ' ', '_');
+        player.name = name;
+        break;
+    }
+    return player;
+}
 GameOptions GameOptionsMenu()
 {
     GameOptions gameOptions;
@@ -63,6 +96,7 @@ GameOptions GameOptionsMenu()
         {"Medium", 1, YELLOW, YELLOW},
         {"Hard", 2, RED, RED},
         {"Custom", 3, RESET, RESET}};
+
     string footer_label = "Game Options";
     ClearScreen();
     while (display.isRunning)
@@ -109,7 +143,6 @@ GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
             int y = 15 + (display.row + i) * 4;
             Gotoxy(x, y);
             textbox[i].value = GetInput(51, x, y);
-            
         }
         HideCursor();
         gameOptions.customRows = stoi(textbox[0].value);
