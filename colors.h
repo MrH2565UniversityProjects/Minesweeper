@@ -6,6 +6,7 @@ const string BG_RESET = "\033[48;5;0m";
 const string BG_GRAY = "\033[48;5;243m";
 const string BG_RED = "\033[48;5;88m";
 const string BG_WHITE = "\033[48;5;255m";
+const string BG_GREEN = "\033[48;5;34m";
 const string RESET = "\033[38;5;255m";
 const string BLACK = "\033[38;5;0m";
 const string RED = "\033[38;5;196m";

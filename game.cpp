@@ -6,11 +6,14 @@
 #include <conio.h>
 #include <Windows.h>
 #include <iostream>
+#include <ctime>
 #include "game.h"
 #include "colors.h"
 #include "menu.h"
 #include "utilities.h"
 #include "form.h"
+#include "player.h"
+#include "leaderboard.h"
 using namespace std;
 struct Cell
 {
@@ -248,17 +251,53 @@ void ShowGameOver(string fg_color, string bg_color)
     Gotoxy(x, y);
     cout << fg_color << bg_color << R"(                                                        )";
 }
+void ShowCongratulations(string fg_color, string bg_color)
+{
+
+    int x = 22;
+    int y = 19;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ╔═══════════════════════════════════════════════╗ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║   __  __               _       ___       __   ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║   \ \/ /___  __  __   | |     / (_)___  / /   ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║    \  / __ \/ / / /   | | /| / / / __ \/ /    ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║    / / /_/ / /_/ /    | |/ |/ / / / / /_/     ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║   /_/\____/\__,_/     |__/|__/_/_/ /_(_)      ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║                                               ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ║  ══════════════════════════════════════════   ║ )";
+    y++;
+    Gotoxy(x, y);
+    cout << fg_color << bg_color << R"( ╚═══════════════════════════════════════════════╝ )";
+}
 void StartGame()
 {
 
     options = GameOptionsMenu();
     InitializeGame(options);
-
+    int revalvedCellsCount = 0;
+    time_t startTime, endTime;
+    startTime = time(NULL);  
     bool IsGridGenerate = false;
+    bool won = true;
     while (true)
     {
         DisplayGrid();
-        SetFooter("Use WASD to move, F to flag, and R to reveal.");
+        //SetFooter("Use WASD to move, F to flag, and R to reveal");
+        SetFooter("Use WASD to move, F to flag, R to reveal, V to win!");
         char action = getch();
         if (action == 'w')
         {
@@ -291,6 +330,7 @@ void StartGame()
                 GenerateMines(properties.TotalMineCount, userRow, userCol);
                 CalculateAdjacentMines();
                 IsGridGenerate = true;
+                startTime = time(NULL);
                 RevealCell(userRow, userCol);
                 continue;
             }
@@ -308,12 +348,13 @@ void StartGame()
                 break;
             }
             RevealCell(userRow, userCol);
+            revalvedCellsCount++;
         }
         else if (action == 'f')
         {
             ToggleFlag(userRow, userCol);
         }
-        bool won = true;
+        won = true;
         for (int r = 0; r < properties.rows; r++)
         {
             for (int c = 0; c < properties.cols; c++)
@@ -324,12 +365,37 @@ void StartGame()
                 }
             }
         }
+        if (action == 'v'){
+            won = true;
+        }
         if (won)
         {
-            cout << "Congratulations! You won!" << endl;
+            for (int i = 0; i < 12; i++)
+            {
+
+                ShowCongratulations(BG_GREEN, RESET);
+                Sleep(150);
+                ShowCongratulations(BG_RESET, GREEN);
+                Sleep(150);
+            }
+            Sleep(1500);
             break;
         }
     }
+    endTime = time(NULL);
+    double duration = difftime(endTime, startTime);
+    int score = CalculateScore(duration,revalvedCellsCount,won);
+    string name = "player10";
+    Player player = {name,score,won};
+    UpdateLeaderboard(player);
     char c = getch();
     ClearScreen();
 };
+int CalculateScore(double duration,int revalvedCellsCount,bool isWin){
+    if(isWin){
+         int _const = 100000;
+         return  ((properties.TotalMineCount * 1.0)/(properties.rows * properties.cols) + 1) * ((_const*1.0)/(duration+1));
+    }
+    int _const = 37*19;
+    return  (_const * ((revalvedCellsCount*1.0)/(properties.rows * properties.cols)));
+}

@@ -8,3 +8,4 @@ void ToggleFlag(int row, int col);
 void InitializeGird();
 void InitializeGame();
 void StartGame();
+int CalculateScore(double duration,int revalvedCellsCount,bool isWin);
