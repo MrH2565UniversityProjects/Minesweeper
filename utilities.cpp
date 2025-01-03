@@ -46,6 +46,41 @@ int GetMaxLineLength(string multilineString) {
     return maxLength; */
     return 50;
 }
+bool IsDigit(char ch){
+    return ('0' <= ch) && ('9' >= ch);
+}
+string GetNumberInput(int maxLength, int cursorX, int cursorY)
+{
+    string input;
+    char ch;
+
+    while (true)
+    {
+        ch = getch();
+        if(!(IsDigit(ch) || ch == '\r' || ch == '\b')) continue;
+
+        if (ch == '\r')
+        {
+            break; 
+        }
+        else if (ch == '\b') 
+        {
+            if (!input.empty())
+            {
+                input.pop_back();
+                Gotoxy(cursorX + input.length(), cursorY); 
+                cout << " \b";
+            }
+        }
+        else if (input.length() < maxLength)
+        {
+            input.push_back(ch);
+            cout << ch; 
+        }
+    }
+
+    return input; 
+}
 string GetInput(int maxLength, int cursorX, int cursorY)
 {
     string input;
@@ -76,4 +111,17 @@ string GetInput(int maxLength, int cursorX, int cursorY)
     }
 
     return input; 
+}
+
+string IntToString(int number) {
+    string result = "";   
+    if (number == 0) {
+        result = "0";
+    } else {
+        while (number > 0) {
+            result = static_cast<char>('0' + (number % 10)) + result;
+            number /= 10; 
+        }
+    }
+    return result;
 }

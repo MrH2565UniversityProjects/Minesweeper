@@ -59,8 +59,7 @@ void MainMenu(Player player)
 Player SignInMenu()
 {
     Player player = {"",0,false};
-    Display display = {2, 2, 1, 2, true};
-    const int textboxsCount = 3;
+    Display display = {0, 0, 1, 0, true};
     Textbox textbox = {"Enter your name", 0, YELLOW};
     string footer_label = "Press Any Key To Start Game!";
     ClearScreen();
@@ -72,14 +71,11 @@ Player SignInMenu()
         ShowTextbox(textbox, display);
         ResetDisplay(display);
         ShowCursor();
-            int x = 30;
-            int y = 15 + (display.row) * 4;
-            Gotoxy(x, y);
-            textbox.value = GetInput(51, x, y);
-        
+        GetTextboxInput(textbox,display);
         HideCursor();
         string name = textbox.value;
         replace(name.begin(), name.end(), ' ', '_');
+        if(name == "")name = "_blank";
         player.name = name;
         break;
     }
@@ -91,11 +87,11 @@ GameOptions GameOptionsMenu()
 
     Display display = {0, 0, 4, 0, true};
     const int bottonsCount = 4;
-    Button buttons[4] = {
+    Button buttons[5] = {
         {"Easy", 0, GREEN, GREEN},
         {"Medium", 1, YELLOW, YELLOW},
         {"Hard", 2, RED, RED},
-        {"Custom", 3, RESET, RESET}};
+        {"Custom", 3, BLUE, BLUE}};
 
     string footer_label = "Game Options";
     ClearScreen();
@@ -125,30 +121,28 @@ GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
     Display display = {1, 1, 3, 1, true};
     const int textboxsCount = 3;
     Textbox textbox[textboxsCount] = {
-        {"Rows count", 0, RESET},
-        {"Columns count", 1, RESET},
-        {"Mines Cont", 2, RESET}};
+        {"Rows count", 0, CYAN,true},
+        {"Columns count", 1, CYAN,true},
+        {"Mines Cont", 2, CYAN,true}};
     string footer_label = "Press Any Key To Start Game!";
     ClearScreen();
     while (display.isRunning)
     {
         MoveCursorToTopLeft();
+        ResetDisplay(display);
         ShowForm();
         ShowTextboxs(textbox, display);
         ResetDisplay(display);
         ShowCursor();
         for (int i = 0; i < textboxsCount; i++)
-        {
-            int x = 30;
-            int y = 15 + (display.row + i) * 4;
-            Gotoxy(x, y);
-            textbox[i].value = GetInput(51, x, y);
+        {  
+            GetTextboxInput(textbox[i],display);
         }
         HideCursor();
         gameOptions.customRows = stoi(textbox[0].value);
         gameOptions.customCols = stoi(textbox[1].value);
         gameOptions.customMinesCount = stoi(textbox[2].value);
-        if (gameOptions.customRows > 19 ||
+        if (gameOptions.customRows > 17 ||
             gameOptions.customCols > 37 ||
             (gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 18) ||
             gameOptions.customMinesCount < 1)

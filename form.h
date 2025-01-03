@@ -56,7 +56,8 @@ struct Textbox{
     string label;
     int row;
     string color = RESET;
-    string value;
+    bool IsNumberOnly = false;
+    string value = "";
 };
 struct Label{
     string text;
@@ -68,6 +69,7 @@ void ShowButton(Button &_button,Display& _display);
 void ShowTextbox(Textbox &_textbox,Display& _display);
 void ShowButtons(Button _buttons[],Display& _display);
 void ShowTextboxs(Textbox _textboxs[], Display &_display);
+void GetTextboxInputs(Textbox &_textbox, Display &_display);;
 void ResetDisplay(Display &display);
 void ShowLabel(Label &_label,int y);
 void ShowForm();

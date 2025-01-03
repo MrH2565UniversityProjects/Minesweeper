@@ -28,6 +28,7 @@ struct GameProperties
 {
     int rows;
     int cols;
+    int UsageFlags;
     int TotalMineCount;
     Cell** grid;
 };
@@ -50,7 +51,7 @@ bool AreCellsAdjacent(int row1, int col1, int row2, int col2)
 }
 void GenerateMines(int totalMines, int user_row, int user_col)
 {
-    srand(time(0));
+    srand(static_cast<unsigned int>(time(nullptr)));
     for (int i = 0; i < totalMines;)
     {
         int row = rand() % properties.rows;
@@ -78,7 +79,9 @@ void CalculateAdjacentMines()
                 for (int delta_col = -1; delta_col <= 1; delta_col++)
                 {
                     int new_row = row + delta_row, new_col = col + delta_col;
-                    if (new_row >= 0 && new_row < properties.rows && new_col >= 0 && new_col < properties.cols && properties.grid[new_row][new_col].isMine)
+                    if (new_row >= 0 && new_row < properties.rows &&
+                    new_col >= 0 && new_col < properties.cols && 
+                    properties.grid[new_row][new_col].isMine)
                     {
                         count++;
                     }
@@ -177,7 +180,13 @@ void ToggleFlag(int row, int col)
 {
     if (row >= 0 && row < properties.rows && col >= 0 && col < properties.cols && !properties.grid[row][col].isRevealed)
     {
-        properties.grid[row][col].isFlagged = !properties.grid[row][col].isFlagged;
+        if(properties.grid[row][col].isFlagged){
+            properties.grid[row][col].isFlagged = false;
+            properties.UsageFlags++;
+        }else if(!properties.grid[row][col].isFlagged && properties.UsageFlags > 0){
+            properties.grid[row][col].isFlagged = true;
+            properties.UsageFlags--;
+        }
     }
 }
 void InitializeGird()
@@ -226,6 +235,7 @@ void InitializeGame(GameOptions options)
     start_y = 14 + (19 - properties.rows) / 2;
     if (start_x % 2 == 0)
         start_x++;
+    properties.UsageFlags = properties.TotalMineCount;
     InitializeGird();
     ShowForm();
     DisplayGround();
@@ -308,9 +318,18 @@ void StartGame(Player player)
     {
         DisplayGrid();
         //SetFooter("Use WASD to move, F to flag, and R to reveal");
+        Label gameinformation;
+        gameinformation.text = "Flags: " + IntToString(properties.UsageFlags);
+        gameinformation.color = GREEN;
+        if(properties.UsageFlags < properties.TotalMineCount / 3) gameinformation.color = RED;
+        else if(properties.UsageFlags < 2 * properties.TotalMineCount / 3) gameinformation.color = YELLOW;
+        ShowLabel(gameinformation,33);
         SetFooter("Use WASD to move, F to flag, R to reveal, V to win!");
         char action = getch();
-        if (action == 'w')
+            if (isupper(action)) {
+        action = tolower(action);
+    }
+        if (action == 'w' )
         {
             userRow--;
             if (userRow < 0)
@@ -399,7 +418,9 @@ void StartGame(Player player)
     int score = CalculateScore(duration,revalvedCellsCount,isWin);
     player.score = score;
     player.isWin = isWin;
-    UpdateLeaderboard(player);
+    if(score > 0){
+            UpdateLeaderboard(player);
+    }
     char c = getch();
     ClearScreen();
 };
