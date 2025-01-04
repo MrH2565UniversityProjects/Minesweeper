@@ -105,7 +105,7 @@ void DisplayGround()
     {
         for (int c = 0; c < cols; c++)
         {
-            cout << BG_RESET << DARK_BLUE << "# ";
+            cout << BG_RESET << DARK_GRAY << "■ ";
         }
         y++;
         Gotoxy(x, y);
@@ -126,11 +126,11 @@ void DisplayGrid()
                 cout << BG_GRAY;
             }
             if (properties.grid[r][c].isMine && properties.GameEnd)
-                cout << RED << "*" << RESET;
+                cout << RED << "●" << RESET;
             else if (properties.grid[r][c].isRevealed)
             {
                 if (properties.grid[r][c].isMine)
-                    cout << "*";
+                    cout << "●";
                 else
                 {
                     string colors[6] = {RESET, CYAN, BLUE, RED, ULTERARED, MAGENTA};
@@ -147,11 +147,11 @@ void DisplayGrid()
             }
             else if (properties.grid[r][c].isFlagged)
             {
-                cout << YELLOW << "F";
+                cout << YELLOW << "◄";
             }
             else
             {
-                cout << RESET << "?";
+                cout << LIGHT_GRAY << "■";
             }
             cout << BG_RESET << RESET;
             if (c != properties.cols - 1)
@@ -330,7 +330,7 @@ void Gameplay(Player player)
         DisplayGrid();
         // SetFooter("Use WASD to move, F to flag, and R to reveal");
         ShowFlagsInformation();
-        SetFooter("Use WASD to move, F to flag, R to reveal, V to win!");
+        SetFooter("Use WASD to move, F to flag, Enter to reveal, V to win!");
         char action = getch();
         if (isupper(action))
         {
@@ -360,7 +360,7 @@ void Gameplay(Player player)
             if (userCol > properties.cols - 1)
                 userCol = 0;
         }
-        else if (action == 'r')
+        else if (action == '\r')
         {
             if (!IsGridGenerate)
             {

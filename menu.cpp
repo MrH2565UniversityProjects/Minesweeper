@@ -24,6 +24,7 @@ void MainMenu(Player player)
     ClearScreen();
     while (display.isRunning)
     {
+        cout << BG_RESET << RESET;
         MoveCursorToTopLeft();
         ShowForm();
         Label WelcomeMessage = {"Welcome " + player.name, YELLOW};
