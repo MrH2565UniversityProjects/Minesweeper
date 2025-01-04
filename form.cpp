@@ -92,7 +92,6 @@ void ShowLabel(Label &_label, int y)
     Gotoxy(x, y);
     cout << _label.color << _label.text << RESET;
 }
-
 void GetTextboxInput(Textbox &_textbox, Display &_display)
 {
     int x = 30;

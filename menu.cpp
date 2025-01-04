@@ -59,15 +59,45 @@ void MainMenu(Player player)
 Player SignInMenu()
 {
     Player player = {"", 0, false};
-    Display display = {0, 0, 1, 0, true};
-    Textbox textbox = {"Enter your name", 0, YELLOW};
+    Display display = {4, 4, 1, 4, true};
+    Textbox textbox = {"Enter your name", 5, YELLOW};
     string footer_label = "Press Any Key To Start Game!";
     ClearScreen();
     while (display.isRunning)
     {
         MoveCursorToTopLeft();
         ShowForm();
+        int x = 8;
+        int y = 14;
+        Gotoxy(x,y);
+        cout << CYAN << "╔════════════════════════════════════════════════════════════════════════════╗";
+        for(int i=0;i<13;i++){
+        y++;
+        Gotoxy(x,y);
+        cout << "║                                                                            ║";
+        }
+                y++;
+        Gotoxy(x,y);
+        cout << "╚════════════════════════════════════════════════════════════════════════════╝" << RESET;
+        y=17;
+        string lines[6] = {
+            {"Welcome to Minesweeper!"},
+            {"Face the ultimate challenge: uncover tiles, avoid mines, and"},
+            {"trust your instincts. Every number is a clue"},
+            {" every move a risk. Strategy and focus are key!"},
+            {" Created as a simple yet exciting programming project by:"},
+            {"Mahdi Hoseinpoor - 2025"}
+        };
 
+        PrintC((lines[0]),y);
+        y++;
+        PrintC(lines[1],y);
+        PrintC(lines[2],y);
+        PrintC(lines[3],y);
+        y++;
+        PrintC(lines[4],y);
+        y++;
+        PrintC(lines[5],y);
         ShowTextbox(textbox, display);
         ResetDisplay(display);
         ShowCursor();
@@ -104,7 +134,11 @@ GameOptions GameOptionsMenu()
         SetFooter(footer_label);
         ResetDisplay(display);
         char input = getch();
-        if (input != '\r')
+        if(input == 27){
+            gameOptions.status = 0;
+            return gameOptions;
+        }
+        else if (input != '\r')
         {
             NavigateForm(display, input);
         }

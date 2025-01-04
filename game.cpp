@@ -226,7 +226,7 @@ void InitializeGame(GameOptions options)
     case 2:
         properties.cols = 37;
         properties.rows = 17;
-        properties.TotalMineCount = properties.cols * properties.rows * 0.5;
+        properties.TotalMineCount = properties.cols * properties.rows * 0.3;
         break;
     case 3:
         properties.cols = options.customCols;
