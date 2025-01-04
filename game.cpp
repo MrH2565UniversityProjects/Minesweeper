@@ -30,7 +30,7 @@ struct GameProperties
     int cols;
     int UsageFlags;
     int TotalMineCount;
-    bool GameEnd =false;
+    bool GameEnd = false;
     Cell **grid;
 };
 GameProperties properties;
@@ -313,7 +313,7 @@ void ShowCongratulations(string fg_color, string bg_color)
     Gotoxy(x, y);
     cout << fg_color << bg_color << R"( ╚═══════════════════════════════════════════════╝ )";
 }
-void StartGame(Player player)
+void Gameplay(Player player)
 {
 
     options = GameOptionsMenu();
@@ -329,14 +329,7 @@ void StartGame(Player player)
     {
         DisplayGrid();
         // SetFooter("Use WASD to move, F to flag, and R to reveal");
-        Label gameinformation;
-        gameinformation.text = "Flags: " + IntToString(properties.UsageFlags);
-        gameinformation.color = GREEN;
-        if (properties.UsageFlags < properties.TotalMineCount / 3)
-            gameinformation.color = RED;
-        else if (properties.UsageFlags < 2 * properties.TotalMineCount / 3)
-            gameinformation.color = YELLOW;
-        ShowLabel(gameinformation, 33);
+        ShowFlagsInformation();
         SetFooter("Use WASD to move, F to flag, R to reveal, V to win!");
         char action = getch();
         if (isupper(action))
@@ -349,33 +342,29 @@ void StartGame(Player player)
             if (userRow < 0)
                 userRow = properties.rows - 1;
         }
-        if (action == 's')
+        else if (action == 's')
         {
             userRow++;
             if (userRow > properties.rows - 1)
                 userRow = 0;
         }
-        if (action == 'a')
+        else if (action == 'a')
         {
             userCol--;
             if (userCol < 0)
                 userCol = properties.cols - 1;
         }
-        if (action == 'd')
+        else if (action == 'd')
         {
             userCol++;
             if (userCol > properties.cols - 1)
                 userCol = 0;
         }
-        if (action == 'r')
+        else if (action == 'r')
         {
             if (!IsGridGenerate)
             {
-                GenerateMines(properties.TotalMineCount, userRow, userCol);
-                CalculateAdjacentMines();
-                IsGridGenerate = true;
-                startTime = time(NULL);
-                RevealCell(userRow, userCol);
+                StartGame(IsGridGenerate, startTime);
                 continue;
             }
             if (properties.grid[userRow][userCol].isMine)
@@ -390,17 +379,11 @@ void StartGame(Player player)
         {
             ToggleFlag(userRow, userCol);
         }
-        isWin = true;
-        for (int r = 0; r < properties.rows; r++)
-        {
-            for (int c = 0; c < properties.cols; c++)
-            {
-                if (!properties.grid[r][c].isMine && !properties.grid[r][c].isRevealed)
-                {
-                    isWin = false;
-                }
-            }
+        else if(action == 27){
+            FreeGameGrid();
+            return;
         }
+        isWin = WinCheck();
         if (action == 'v')
         {
             isWin = true;
@@ -417,28 +400,11 @@ void StartGame(Player player)
     {
         if (isWin)
         {
-            for (int i = 0; i < 12; i++)
-            {
-
-                ShowCongratulations(BG_GREEN, RESET);
-                Sleep(150);
-                ShowCongratulations(BG_RESET, GREEN);
-                Sleep(150);
-            }
-            Sleep(1000);
+            WinAnimation();
         }
         else
         {
-            properties.GameEnd = true;
-            for (int i = 0; i < 12; i++)
-            {
-
-                ShowGameOver(BG_RED, RESET);
-                Sleep(150);
-                ShowGameOver(BG_RESET, RED);
-                Sleep(150);
-            }
-            Sleep(1000);
+            LoseAnimation();
         }
     }
     FreeGameGrid();
@@ -454,6 +420,61 @@ void StartGame(Player player)
     char c = getch();
     ClearScreen();
 };
+void WinAnimation()
+{
+    for (int i = 0; i < 12; i++)
+    {
+        ShowCongratulations(BG_GREEN, RESET);
+        Sleep(150);
+        ShowCongratulations(BG_RESET, GREEN);
+        Sleep(150);
+    }
+    Sleep(1000);
+}
+void LoseAnimation()
+{
+    for (int i = 0; i < 12; i++)
+    {
+        ShowGameOver(BG_RED, RESET);
+        Sleep(150);
+        ShowGameOver(BG_RESET, RED);
+        Sleep(150);
+    }
+    Sleep(1000);
+}
+void StartGame(bool &IsGridGenerate, time_t &startTime)
+{
+    GenerateMines(properties.TotalMineCount, userRow, userCol);
+    CalculateAdjacentMines();
+    IsGridGenerate = true;
+    startTime = time(NULL);
+    RevealCell(userRow, userCol);
+}
+bool WinCheck()
+{
+    for (int r = 0; r < properties.rows; r++)
+    {
+        for (int c = 0; c < properties.cols; c++)
+        {
+            if (!properties.grid[r][c].isMine && !properties.grid[r][c].isRevealed)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+void ShowFlagsInformation()
+{
+    Label gameinformation;
+    gameinformation.text = "Flags: " + IntToString(properties.UsageFlags);
+    gameinformation.color = GREEN;
+    if (properties.UsageFlags < properties.TotalMineCount / 3)
+        gameinformation.color = RED;
+    else if (properties.UsageFlags < 2 * properties.TotalMineCount / 3)
+        gameinformation.color = YELLOW;
+    ShowLabel(gameinformation, 33);
+}
 int CalculateScore(double duration, int revalvedCellsCount, bool isWin)
 {
     if (isWin)

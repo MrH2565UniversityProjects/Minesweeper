@@ -72,13 +72,13 @@ void Leaderboard(string Filename)
     ShowForm();
     SetFooter("Leaderboard");
     Gotoxy(x, y);
-    cout << RESET << "╒══════╤═════════════════════════════════════════════════════════════╤═══════╕" << RESET;
+    cout << RESET << "╒══════╤═════════════════════════════════════════════════════════╤═══════════╕" << RESET;
     y++;
     Gotoxy(x, y);
-    cout << RESET << "│ Rank │ Player                                                      │ Score │" << RESET;
+    cout << RESET << "│ Rank │ Player                                                  │ Score     │" << RESET;
     y++;
     Gotoxy(x, y);
-    cout << RESET << "╞══════╪═════════════════════════════════════════════════════════════╪═══════╡" << RESET;
+    cout << RESET << "╞══════╪═════════════════════════════════════════════════════════╪═══════════╡" << RESET;
     for (int i = 0; i < counter; i++)
     {
         y++;
@@ -88,11 +88,11 @@ void Leaderboard(string Filename)
         color = GREEN;
         else
         color = RED;
-        cout << RESET << "│ " << color << setw(4) << left << ranking[i] << RESET << " │ " << color << setw(59) << left << players[i].name <<RESET << " │ "<< color << setw(5) << right << players[i].score << RESET << " │" << endl;
+        cout << RESET << "│ " << color << setw(4) << left << ranking[i] << RESET << " │ " << color << setw(55) << left << players[i].name <<RESET << " │ "<< color << setw(9) << left << players[i].score << RESET << " │" << endl;
     }
     y++;
     Gotoxy(x, y);
-    cout << RESET << "╘══════╧═════════════════════════════════════════════════════════════╧═══════╛" << RESET << endl
+    cout << RESET << "╘══════╧═════════════════════════════════════════════════════════╧═══════════╛" << RESET << endl
          << endl;
     Label EndMessage = {
         "Press any key to back to main menu...",

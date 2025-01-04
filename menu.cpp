@@ -42,7 +42,7 @@ void MainMenu(Player player)
             switch (display.user_row_position)
             {
             case 1:
-                StartGame(player);
+                Gameplay(player);
                 break;
             case 2:
                 Leaderboard();
