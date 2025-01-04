@@ -57,7 +57,7 @@ string GetNumberInput(int maxLength, int cursorX, int cursorY)
     while (true)
     {
         ch = getch();
-        if(!(IsDigit(ch) || ch == '\r' || ch == '\b')) continue;
+        if(!(IsDigit(ch) || ch == '\r' || ch == '\b' || ch == 27)) continue;
 
         if (ch == '\r')
         {
@@ -71,6 +71,9 @@ string GetNumberInput(int maxLength, int cursorX, int cursorY)
                 Gotoxy(cursorX + input.length(), cursorY); 
                 cout << " \b";
             }
+        }
+        else if(ch == 27){
+            return "";
         }
         else if (input.length() < maxLength)
         {
@@ -102,6 +105,9 @@ string GetInput(int maxLength, int cursorX, int cursorY)
                 Gotoxy(cursorX + input.length(), cursorY); 
                 cout << " \b";
             }
+        }
+        else if(ch == 27){
+            return "";
         }
         else if (input.length() < maxLength)
         {

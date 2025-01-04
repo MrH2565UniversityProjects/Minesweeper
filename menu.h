@@ -3,11 +3,12 @@
 using namespace std;
 struct GameOptions
 {
-    std::string playerName;
+    string playerName;
     int difficulty;
     int customRows = 0;
     int customCols = 0;
     int customMinesCount = 0;
+    int status = 1;
 };
 
 GameOptions GameOptionsMenu();

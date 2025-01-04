@@ -93,7 +93,7 @@ void ShowLabel(Label &_label, int y)
     cout << _label.color << _label.text << RESET;
 }
 
-void GetTextboxInput(Textbox& _textbox, Display &_display)
+void GetTextboxInput(Textbox &_textbox, Display &_display)
 {
     int x = 30;
     int y = 15 + _display.row * 4;
@@ -107,4 +107,16 @@ void GetTextboxInput(Textbox& _textbox, Display &_display)
         _textbox.value = GetInput(51, x, y);
     }
     _display.row++;
+}
+void ResetTextboxInput(Textbox &_textbox, Display &_display)
+{
+    _display.row--;
+    int x = 30;
+    int y = 15 + _display.row * 4;
+    Gotoxy(x, y);
+    for(int i = 0; i < _textbox.value.length(); i++)
+    {
+        cout << ' ';
+    }
+    ShowLabel(_textbox.ValidationMessage,y+2);
 }

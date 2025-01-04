@@ -52,16 +52,17 @@ int row;
 string color = RESET;
 string hover_color = YELLOW;
 };
+struct Label{
+    string text;
+    string color = RESET;   
+};
 struct Textbox{
     string label;
     int row;
     string color = RESET;
     bool IsNumberOnly = false;
+    Label ValidationMessage;
     string value = "";
-};
-struct Label{
-    string text;
-    string color = RESET;   
 };
 void NavigateForm(Display &display , char input);
 void SetFooter(string label);

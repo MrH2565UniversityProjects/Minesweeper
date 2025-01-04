@@ -26,8 +26,8 @@ void MainMenu(Player player)
     {
         MoveCursorToTopLeft();
         ShowForm();
-        Label WelcomeMessage = { "Welcome " + player.name,YELLOW};
-        ShowLabel(WelcomeMessage,15);
+        Label WelcomeMessage = {"Welcome " + player.name, YELLOW};
+        ShowLabel(WelcomeMessage, 15);
         ShowButtons(buttons, display);
         SetFooter(footer_label);
         display.row = display.start_row;
@@ -58,7 +58,7 @@ void MainMenu(Player player)
 }
 Player SignInMenu()
 {
-    Player player = {"",0,false};
+    Player player = {"", 0, false};
     Display display = {0, 0, 1, 0, true};
     Textbox textbox = {"Enter your name", 0, YELLOW};
     string footer_label = "Press Any Key To Start Game!";
@@ -71,11 +71,12 @@ Player SignInMenu()
         ShowTextbox(textbox, display);
         ResetDisplay(display);
         ShowCursor();
-        GetTextboxInput(textbox,display);
+        GetTextboxInput(textbox, display);
         HideCursor();
         string name = textbox.value;
         replace(name.begin(), name.end(), ' ', '_');
-        if(name == "")name = "_blank";
+        if (name == "")
+            name = "_blank";
         player.name = name;
         break;
     }
@@ -121,9 +122,9 @@ GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
     Display display = {1, 1, 3, 1, true};
     const int textboxsCount = 3;
     Textbox textbox[textboxsCount] = {
-        {"Rows count", 0, CYAN,true},
-        {"Columns count", 1, CYAN,true},
-        {"Mines Cont", 2, CYAN,true}};
+        {"Rows count", 0, CYAN, true, {"Rows must Be a number Between 3 and 17", RED}},
+        {"Columns count", 1, CYAN, true, {"Columns must Be a number Between 3 and 37", RED}},
+        {"Mines Cont", 2, CYAN, true, {"Mines must be positive number and lower than all cells mines 18", RED}}};
     string footer_label = "Press Any Key To Start Game!";
     ClearScreen();
     while (display.isRunning)
@@ -134,26 +135,51 @@ GameOptions CustomGameOptionsMenu(GameOptions gameOptions)
         ShowTextboxs(textbox, display);
         ResetDisplay(display);
         ShowCursor();
-        for (int i = 0; i < textboxsCount; i++)
-        {  
-            GetTextboxInput(textbox[i],display);
+        bool closeMenu = false;
+         while (!closeMenu)
+        {
+            GetTextboxInput(textbox[0], display);
+            if(textbox[0].value == ""){
+                closeMenu = true;
+                break;
+            }
+            gameOptions.customRows = stoi(textbox[0].value);
+            if (gameOptions.customRows > 17 || gameOptions.customRows < 3)
+            {
+                ResetTextboxInput(textbox[0], display);
+            }else break;
         }
+
+         while (!closeMenu)
+        {
+            GetTextboxInput(textbox[1], display);
+            gameOptions.customCols = stoi(textbox[1].value);
+            if (gameOptions.customCols > 37 || gameOptions.customCols < 3)
+            {
+                ResetTextboxInput(textbox[1], display);
+            }else break;
+        };
+        int countdownToReset = 1;
+        while (!closeMenu)
+        {
+            if(countdownToReset < 0)
+                break;
+            GetTextboxInput(textbox[2], display);
+            gameOptions.customMinesCount = stoi(textbox[2].value);
+            if ((gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 18) ||
+                gameOptions.customMinesCount < 1)
+            {
+                ResetTextboxInput(textbox[2], display);
+                countdownToReset--;
+
+            }else break;
+        }
+
         HideCursor();
-        gameOptions.customRows = stoi(textbox[0].value);
-        gameOptions.customCols = stoi(textbox[1].value);
-        gameOptions.customMinesCount = stoi(textbox[2].value);
-        if (gameOptions.customRows > 17 ||
-            gameOptions.customCols > 37 ||
-            (gameOptions.customMinesCount >= gameOptions.customRows * gameOptions.customCols - 18) ||
-            gameOptions.customMinesCount < 1)
-        {
-            SetFooter("Please enter logical information!");
-            char input = getch();
-        }
-        else
-        {
-            SetFooter(footer_label);
-            return gameOptions;
-        }
+        if(countdownToReset < 0)
+            continue;
+        if(closeMenu)
+            gameOptions.status = 0;
+        return gameOptions;
     }
 }
